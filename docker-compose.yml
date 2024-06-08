@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    volumes:
+      - ./static/:/my_app/static
+    stop_signal: SIGKILL
+    ports:
+      - '80:80'
+
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_DB=twitter_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    stop_signal: SIGKILL
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./database/db/:/var/lib/postgresql/data

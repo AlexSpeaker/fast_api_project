@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "python-advanced-diploma"
+version = "0.1.0"
+description = ""
+authors = ["AlexSokolov <speaker04@mail.ru>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.110.2"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+jinja2 = "^3.1.3"
+pytest = "^8.1.2"
+httpx = "^0.27.0"
+mypy = "^1.10.0"
+black = "^24.4.2"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+flake8-bugbear = "^24.4.26"
+flake8-pie = "^0.16.0"
+sqlalchemy = "^2.0.29"
+asyncpg = "^0.29.0"
+alembic = "^1.13.1"
+aiosqlite = "^0.20.0"
+psycopg2-binary = "^2.9.9"
+pydantic = "^2.7.1"
+python-multipart = "^0.0.9"
+aiofiles = "^23.2.1"
+pytest-asyncio = "^0.23.6"
+types-aiofiles = "^23.2.0.20240403"
+sentry-sdk = {extras = ["fastapi"], version = "^2.1.1"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
