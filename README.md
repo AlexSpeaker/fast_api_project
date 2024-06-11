@@ -2,10 +2,6 @@
 
 ------------
 
-### Клонирование репозитория:
-
-- **git clone https://gitlab.skillbox.ru/aleksandr_sokolov_11/python_advanced_diploma**
-- **git checkout dev**
 
 ### Создание и активация виртуального окружения:
 
