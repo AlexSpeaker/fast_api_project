@@ -20,9 +20,7 @@ class User(Base):
     login: Mapped["ApiKey"] = relationship(back_populates="user")
     tweets: Mapped[List["Tweet"]] = relationship(back_populates="author")
     likes: Mapped[List["Like"]] = relationship(back_populates="user")
-    # Мои подписки.
-    # (называю именно так, потому что окончательно запутался с followers и following.
-    # Потом, может быть, переименую...)
+    
     my_subscriptions: Mapped[List["Subscriptions"]] = relationship(
         primaryjoin="User.id == Subscriptions.user_id",
         back_populates="user",
