@@ -1,0 +1,27 @@
+[project]
+name = "fast-api-project-1"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "AlexSokolov",email = "speaker04@mail.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "black (>=25.1.0,<26.0.0)",
+    "flake8 (>=7.1.1,<8.0.0)",
+    "flake8-bugbear (>=24.12.12,<25.0.0)",
+    "flake8-pie (>=0.16.0,<0.17.0)",
+    "isort (>=6.0.0,<7.0.0)",
+    "mypy (>=1.14.1,<2.0.0)",
+    "pytest (>=8.3.4,<9.0.0)",
+    "fastapi[standard] (>=0.115.8,<0.116.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
