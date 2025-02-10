@@ -3,7 +3,7 @@ from string import ascii_letters
 
 import pytest
 from app.database.database import Database
-from app.database.models import Like, Tweet, User, Attachment
+from app.database.models import Attachment, Like, Tweet, User
 from app.database.models.tweet import MAX_TWEET_LENGTH
 from sqlalchemy import select
 from sqlalchemy.orm import subqueryload
@@ -201,6 +201,7 @@ async def test_add_like(db: Database) -> None:
         # Смотрим лайк.
         assert len(tweet_bd.likes) == 1
         assert tweet_bd.likes[0].user == main_user
+
 
 @pytest.mark.asyncio
 async def test_add_attachment(db: Database) -> None:

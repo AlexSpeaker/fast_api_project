@@ -10,9 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 settings = Settings(
     BASE_DIR=BASE_DIR,
-    MEDIA_ROOT=BASE_DIR / "app" / "routers" / "media",
-    MEDIA_URL="/",
-    IMAGES_FOLDER_NAME = "images",
+    IMAGES_FOLDER_NAME="images",
+    MEDIA_FOLDER_NAME="media",
     STATIC_ROOT=BASE_DIR / "app" / "routers" / "static",
     STATIC_URL="/",
     DB_SETTINGS=db_settings,

@@ -6,6 +6,7 @@ from app.application.classes import CustomFastApi
 from app.application.factory_function import get_app
 from app.database.database import Database
 from app.settings.classes import DBSettings, Settings
+from httpx import ASGITransport, AsyncClient
 from tests.utils import create_db, create_users, drop_db
 
 
@@ -20,9 +21,8 @@ async def settings() -> Settings:
 
     return Settings(
         BASE_DIR=base_dir,
-        MEDIA_ROOT=base_dir / "temp" / "media",
-        MEDIA_URL="/",
         IMAGES_FOLDER_NAME="images",
+        MEDIA_FOLDER_NAME="media",
         STATIC_ROOT=base_dir / "temp" / "static",
         STATIC_URL="/",
         DB_SETTINGS=db_settings,
@@ -42,3 +42,8 @@ async def db(settings: Settings) -> AsyncGenerator[Database, None]:
     await create_users(db=db)
     yield db
     await drop_db(db=db)
+
+
+@pytest_asyncio.fixture
+async def client(app: CustomFastApi) -> AsyncClient:
+    return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
