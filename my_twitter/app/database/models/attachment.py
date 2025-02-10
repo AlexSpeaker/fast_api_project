@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from app.database.models import Base
+from app.database.models.base import Base
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -14,6 +14,6 @@ class Attachment(Base):
     tweet_id: Mapped[int] = mapped_column(
         ForeignKey(column="tweets.id", ondelete="CASCADE"), nullable=True
     )
-    image_url: Mapped[str] = mapped_column(String(1000), nullable=False)
+    image_path: Mapped[str] = mapped_column(String(1000), nullable=False)
 
     tweet: Mapped["Tweet"] = relationship(back_populates="attachments")

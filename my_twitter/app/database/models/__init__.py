@@ -1,15 +1,13 @@
-from .base import Base
-from .user import User
 from .attachment import Attachment
 from .like import Like
 from .subscriptions import Subscriptions
 from .tweet import Tweet
+from .user import User
 
 __all__ = [
-    'Base',
-    'User',
-    'Attachment',
-    'Like',
-    'Tweet',
-    'Subscriptions',
+    "User",
+    "Attachment",
+    "Like",
+    "Tweet",
+    "Subscriptions",
 ]

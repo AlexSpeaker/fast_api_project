@@ -1,3 +1,4 @@
+from app.settings.settings import settings as app_settings
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -16,5 +17,9 @@ class Database:
     def get_engine(self) -> AsyncEngine:
         return self.__engine
 
-    async def get_async_session(self) -> async_sessionmaker[AsyncSession]:
+    @property
+    def get_sessionmaker(self) -> async_sessionmaker[AsyncSession]:
         return self.__async_sessionmaker
+
+
+db = Database(db_url=app_settings.DB_SETTINGS.DATABASE_URL)

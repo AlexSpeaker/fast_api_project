@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from app.database.models import Base
+from app.database.models.base import Base
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
@@ -28,7 +28,7 @@ class Subscriptions(Base):
 
     @validates("follower_id")
     def validate_follower_id(self, _: str, value: int) -> int:
-        if value == self.user.id:
+        if value == self.user_id:
             raise ValueError(
                 f"You can't follow yourself. follower_id={value} user_id={self.user.id}"
             )

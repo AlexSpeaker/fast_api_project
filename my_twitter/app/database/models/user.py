@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, List
 
 from app.database.models.base import Base
+from app.database.models.subscriptions import Subscriptions
 from sqlalchemy import String
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from app.database.models.like import Like
-    from app.database.models.subscriptions import Subscriptions
     from app.database.models.tweet import Tweet
 
 MAX_NAME_LENGTH = 255
@@ -30,7 +30,6 @@ class User(Base):
 
     my_subscriptions: Mapped[List["Subscriptions"]] = relationship(
         primaryjoin="User.id == Subscriptions.user_id",
-        back_populates="user",
         cascade="all, delete-orphan",
     )
     users_in_my_subscriptions: AssociationProxy[List["User"]] = association_proxy(
@@ -41,7 +40,6 @@ class User(Base):
 
     my_subscribers: Mapped[List["Subscriptions"]] = relationship(
         primaryjoin="User.id == Subscriptions.follower_id",
-        back_populates="follower",
     )
     users_following_me: AssociationProxy[List["User"]] = association_proxy(
         target_collection="my_subscribers", attr="user"
