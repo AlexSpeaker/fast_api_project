@@ -20,10 +20,10 @@ class Subscriptions(Base):
     )
 
     follower: Mapped["User"] = relationship(
-        foreign_keys=[follower_id], back_populates="my_subscribers"
+        foreign_keys=[follower_id], back_populates="my_subscribers", lazy="joined"
     )
     user: Mapped["User"] = relationship(
-        foreign_keys=[user_id], back_populates="my_subscriptions"
+        foreign_keys=[user_id], back_populates="my_subscriptions", lazy="joined"
     )
 
     @validates("follower_id")
