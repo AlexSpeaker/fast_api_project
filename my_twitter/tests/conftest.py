@@ -6,6 +6,7 @@ from app.application.classes import CustomFastApi
 from app.application.factory_function import get_app
 from app.database.database import Database
 from app.settings.classes import DBSettings, Settings
+from app.settings.settings import log_settings
 from httpx import ASGITransport, AsyncClient
 from tests.utils import create_db, create_users, drop_db
 
@@ -22,11 +23,13 @@ async def settings() -> Settings:
     return Settings(
         BASE_DIR=base_dir,
         IMAGES_FOLDER_NAME="images",
-        MEDIA_FOLDER_NAME="media",
+        MEDIA_FOLDER_ROOT=base_dir / "temp" / "media",
+        MEDIA_URL="/media/",
         STATIC_ROOT=base_dir / "temp" / "static",
         STATIC_URL="/",
         DB_SETTINGS=db_settings,
         DEBUG=False,
+        LOG_SETTINGS=log_settings,
     )
 
 

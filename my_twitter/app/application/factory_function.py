@@ -35,4 +35,9 @@ def get_app(
             StaticFiles(directory=settings.STATIC_ROOT, html=True),
             name="static",
         )
+        app.mount(
+            settings.MEDIA_URL,
+            StaticFiles(directory=settings.MEDIA_FOLDER_ROOT),
+            name="media",
+        )
     return app

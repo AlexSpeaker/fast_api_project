@@ -1,3 +1,4 @@
+import logging.config
 from typing import Any
 
 from app.database.database import Database
@@ -13,6 +14,11 @@ class CustomFastApi(FastAPI):
         super().__init__(*args, **kwargs)
         self.__settings = settings
         self.__db = db
+        logging.config.dictConfig(self.__settings.LOG_SETTINGS.LOGGING_CONFIG)
+
+    @staticmethod
+    def get_logger(name: str) -> logging.Logger:
+        return logging.getLogger(".".join(["my_twitter_app", name]))
 
     def get_settings(self) -> Settings:
         return self.__settings
