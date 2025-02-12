@@ -1,18 +1,110 @@
+import os
+import uuid
+from pathlib import Path
 from typing import Any, Dict, Type
+from urllib.parse import urljoin
 
+import aiofiles
 from app.database.models import User
 from app.settings.classes import Settings
+from fastapi import HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import subqueryload
 
 
 class ImageManager:
+    __ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif"]
+
     def __init__(
         self,
         settings: Settings,
+        user: User,
+        image: UploadFile,
     ):
-        pass
+        if image.content_type not in self.__ALLOWED_MIME_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail="Файл не является изображением или не поддерживается.",
+            )
+        self.__image = image
+        if self.__image.filename is None:
+            raise HTTPException(status_code=400, detail="У файла нет имени.")
+        filename_list = self.__image.filename.split(".")
+        if len(filename_list) < 2:
+            raise HTTPException(status_code=400, detail="У файла нет расширения.")
+        extension = filename_list[-1]
+        filename = ".".join([str(uuid.uuid4), extension])
+        self.__file_path = os.path.join(
+            settings.IMAGES_FOLDER_NAME, str(user.id), filename
+        )
+        self.__abs_file_path = settings.MEDIA_FOLDER_ROOT / self.__file_path
+
+    async def save(self) -> None:
+        """
+        Функция сохраняет файл.
+
+        :return: None.
+        """
+        await save_file(self.__abs_file_path, self.__image)
+
+    @property
+    def image(self) -> UploadFile:
+        """
+        Возвращает переданный файл.
+
+        :return: UploadFile.
+        """
+        return self.__image
+
+    @property
+    def file_path(self) -> str:
+        """
+        Возвращает путь до файла относительно MEDIA_FOLDER_ROOT.
+
+        :return: Относительный путь.
+        """
+        return self.__file_path
+
+    @property
+    def abs_file_path(self) -> Path:
+        """
+        Возвращает полный путь до файла.
+
+        :return: Полный путь до файла
+        """
+        return self.__abs_file_path
+
+
+def get_image_url(file_path: str, settings: Settings) -> str:
+    """
+    Функция возвращает url файла согласно настроек.
+
+    :param file_path: Путь к файлу относительно MEDIA_FOLDER_ROOT.
+    :param settings: Settings.
+    :return: str
+    """
+
+    normalized_path = os.path.normpath(file_path).replace("\\", "/").strip("/")
+    media_url = (
+        settings.MEDIA_URL
+        if settings.MEDIA_URL.endswith("/")
+        else settings.MEDIA_URL + "/"
+    )
+    return urljoin(media_url, normalized_path)
+
+
+async def save_file(file_path: Path, file: UploadFile) -> None:
+    """
+    Функция сохраняет файл по указанному пути.
+
+    :param file_path: Путь сохранения.
+    :param file: Файл.
+    :return: None.
+    """
+    async with aiofiles.open(file_path, "wb") as buffer:
+        while chunk := await file.read(1024):  # Читаем файл частями
+            await buffer.write(chunk)  # Записываем в файл
 
 
 async def get_or_create[T](

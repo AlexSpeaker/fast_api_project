@@ -7,11 +7,12 @@ from app.database.database import Database
 from app.database.database import db as database
 from app.routers.exception_handlers import (
     exception_handler,
+    http_exception_handler,
 )
 from app.routers.routers import routers
 from app.settings.classes import Settings
 from app.settings.settings import settings as app_settings
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.staticfiles import StaticFiles
 
 
@@ -27,6 +28,7 @@ def get_app(
 ) -> CustomFastApi:
     app = CustomFastApi(*args, db=db, settings=settings, lifespan=lifespan, **kwargs)
     app.add_exception_handler(Exception, exception_handler)
+    app.add_exception_handler(HTTPException, http_exception_handler)
     for router in routers_sequence:
         app.include_router(router=router, prefix="/api")
     if settings.DEBUG:

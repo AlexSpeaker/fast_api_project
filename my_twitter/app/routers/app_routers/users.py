@@ -15,7 +15,7 @@ router = APIRouter(tags=["users"])
 @router.get(
     "/users/me",
     response_model=OutUserSchema,
-    description="Предоставляет информацию о текущем пользователе, "
+    description="Предоставляет информацию о текущем пользователе (по умолчанию тестовый пользователь), "
     "а также информацию о пользователях на которых подписан пользователь и пользователях, "
     "которые подписаны на текущего пользователя.",
     name="Информация о текущем пользователе",
@@ -75,7 +75,7 @@ async def get_user(
 @router.post(
     "/users/{user_id}/follow",
     response_model=BaseSchema,
-    description="Подпишет текущего пользователя на пользователя с переданным id.",
+    description="Подпишет текущего пользователя (по умолчанию тестовый пользователь) на пользователя с переданным id.",
     name="Подписка на другого пользователя.",
 )
 async def follow_another_user(
@@ -107,6 +107,46 @@ async def follow_another_user(
             users[1].users_in_my_subscriptions.append(users[0])
         else:
             users[0].users_in_my_subscriptions.append(users[1])
+        await session.commit()
+
+    return BaseSchema()
+
+
+@router.delete(
+    "/users/{user_id}/follow",
+    response_model=BaseSchema,
+    description="Отпишет текущего пользователя (по умолчанию тестовый пользователь) от пользователя с переданным id.",
+    name="Отписка от другого пользователя.",
+)
+async def unsubscribe_from_another_user(
+    user_id: Annotated[int, Path(..., gt=0)],
+    request: Request,
+) -> BaseSchema:
+    """
+    Функция отпишет текущего пользователя от пользователя с переданным id.
+
+    :param user_id: ID пользователя.
+    :param request: Request.
+    :return: BaseSchema.
+    """
+    app: CustomFastApi = request.app
+    db = app.get_db()
+    api_key = request.headers.get("api-key") or "test"
+    async with db.get_sessionmaker() as session:
+        users_q = await session.execute(
+            select(User)
+            .where(or_((User.id == user_id), (User.api_key == api_key)))
+            .options(
+                subqueryload(User.my_subscribers), subqueryload(User.my_subscriptions)
+            )
+        )
+        users = users_q.scalars().all()
+        if len(users) != 2:
+            return BaseSchema(result=False)
+        elif users[0].id == user_id:
+            users[1].users_in_my_subscriptions.remove(users[0])
+        else:
+            users[0].users_in_my_subscriptions.remove(users[1])
         await session.commit()
 
     return BaseSchema()

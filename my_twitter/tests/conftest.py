@@ -24,7 +24,7 @@ async def settings() -> Settings:
         BASE_DIR=base_dir,
         IMAGES_FOLDER_NAME="images",
         MEDIA_FOLDER_ROOT=base_dir / "temp" / "media",
-        MEDIA_URL="/media/",
+        MEDIA_URL="/media",
         STATIC_ROOT=base_dir / "temp" / "static",
         STATIC_URL="/",
         DB_SETTINGS=db_settings,
