@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 debug_router = APIRouter(
     tags=["exceptions"],
@@ -8,10 +8,6 @@ debug_router = APIRouter(
 @debug_router.get(
     "/try_me",
     description="Роут-исключение для проверки хендлера исключений. ZeroDivisionError.",
-    responses={
-        500: {"description": "Internal Server Error"},
-    },
-    response_model=None,
 )
 async def try_me_route() -> None:
     """
@@ -24,10 +20,6 @@ async def try_me_route() -> None:
 @debug_router.get(
     "/try_me_2",
     description="Роут-исключение для проверки хендлера исключений. ValueError.",
-    responses={
-        500: {"description": "Internal Server Error"},
-    },
-    response_model=None,
 )
 async def try_me_route_2() -> None:
     """
@@ -35,3 +27,15 @@ async def try_me_route_2() -> None:
     :return: None.
     """
     raise ValueError("Не верный параметр.")
+
+
+@debug_router.get(
+    "/try_me_3",
+    description="Роут-исключение для проверки хендлера исключений. HTTPException.",
+)
+async def try_me_route_3() -> None:
+    """
+    Роут-исключение для проверки хендлера исключений. HTTPException.
+    :return: None.
+    """
+    raise HTTPException(status_code=404, detail="Не верный запрос.")

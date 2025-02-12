@@ -14,10 +14,10 @@ class Like(Base):
     __table_args__ = (UniqueConstraint("tweet_id", "user_id", name="tweet_id_user_id"),)
     id: Mapped[int] = mapped_column(primary_key=True)
     tweet_id: Mapped[int] = mapped_column(
-        ForeignKey(column="tweets.id", ondelete="CASCADE"), nullable=False
+        ForeignKey(column="tweets.id"), nullable=False
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey(column="users.id", ondelete="CASCADE"), nullable=False
+        ForeignKey(column="users.id"), nullable=False
     )
 
     user: Mapped["User"] = relationship(back_populates="likes")

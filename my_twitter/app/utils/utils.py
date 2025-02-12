@@ -1,7 +1,8 @@
+import asyncio
 import os
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Type
+from typing import Any, Dict, Type, Sequence
 from urllib.parse import urljoin
 
 import aiofiles
@@ -34,7 +35,7 @@ class ImageManager:
         if len(filename_list) < 2:
             raise HTTPException(status_code=400, detail="У файла нет расширения.")
         extension = filename_list[-1]
-        filename = ".".join([str(uuid.uuid4), extension])
+        filename = ".".join([str(uuid.uuid4()), extension])
         self.__file_path = os.path.join(
             settings.IMAGES_FOLDER_NAME, str(user.id), filename
         )
@@ -102,6 +103,7 @@ async def save_file(file_path: Path, file: UploadFile) -> None:
     :param file: Файл.
     :return: None.
     """
+    os.makedirs(file_path.parent.as_posix(), exist_ok=True)
     async with aiofiles.open(file_path, "wb") as buffer:
         while chunk := await file.read(1024):  # Читаем файл частями
             await buffer.write(chunk)  # Записываем в файл
@@ -179,3 +181,27 @@ async def get_user_or_test_user(
         )
         user = user_q.scalars().one()
     return user
+
+async def delete_img_file(*file_path: str, settings: Settings) -> None:
+    """
+    Функция удаляет файлы по переданным путям с учётом настроек.
+
+    :param file_path: Путь к файлу.
+    :param settings: Settings.
+    :return: None.
+    """
+    tasks = [delete_file_async(settings.MEDIA_FOLDER_ROOT / path) for path in file_path]
+    await asyncio.gather(*tasks)
+
+
+async def delete_file_async(file_path: Path) -> None:
+    """
+    Функция удаляет файл по переданному пути.
+
+    :param file_path: Путь к файлу.
+    :return: None.
+    """
+    try:
+        os.remove(file_path)
+    except FileNotFoundError:
+        pass
