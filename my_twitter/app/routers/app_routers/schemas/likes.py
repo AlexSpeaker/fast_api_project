@@ -25,4 +25,7 @@ class LikesSchema(BaseModel):
 
         :return: Имя автора лайка.
         """
-        return self.user.name()
+        return str(self.user.name)
+
+    class Config:
+        from_attributes = True

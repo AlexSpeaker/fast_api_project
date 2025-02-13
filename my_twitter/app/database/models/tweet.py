@@ -16,16 +16,16 @@ MAX_TWEET_LENGTH = 5000
 class Tweet(Base):
     __tablename__ = "tweets"
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey(column="users.id"), nullable=False
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey(column="users.id"), nullable=False)
     content: Mapped[str] = mapped_column(String(MAX_TWEET_LENGTH), nullable=False)
     created: Mapped[datetime] = mapped_column(
         default=datetime.now, server_default=func.now()
     )
 
     author: Mapped["User"] = relationship(back_populates="tweets", lazy="selectin")
-    likes: Mapped[List["Like"]] = relationship(back_populates="tweet", lazy="selectin", cascade="all, delete-orphan")
+    likes: Mapped[List["Like"]] = relationship(
+        back_populates="tweet", lazy="selectin", cascade="all, delete-orphan"
+    )
     attachments: Mapped[List["Attachment"]] = relationship(
         back_populates="tweet", lazy="selectin", cascade="all, delete-orphan"
     )

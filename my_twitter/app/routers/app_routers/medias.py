@@ -1,14 +1,13 @@
 from typing import Annotated
 
 from app.application.classes import CustomFastApi
-from app.database.models import Attachment, User
+from app.database.models import Attachment
 from app.routers.app_routers.schemas.medias import (
     BaseAttachmentSchema,
     OutAttachmentSchema,
 )
-from app.utils.utils import ImageManager
+from app.utils.utils import ImageManager, get_user_or_test_user
 from fastapi import APIRouter, File, Header, Request, UploadFile
-from sqlalchemy import select
 
 router = APIRouter(tags=["media"])
 
@@ -31,14 +30,13 @@ async def create_upload_file(
     :param file: Объект с изображением.
     :param request: Request.
     :param api_key: API key пользователя.
-    :return:
+    :return: OutAttachmentSchema.
     """
     app: CustomFastApi = request.app
     db = app.get_db()
 
     async with db.get_sessionmaker() as session:
-        user_q = await session.execute(select(User).where(User.api_key == api_key))
-        user = user_q.scalars().one()
+        user = await get_user_or_test_user(session, app.get_settings(), api_key)
         attachment_manager = ImageManager(app.get_settings(), user, file)
         await attachment_manager.save()
         attachment = Attachment(image_path=attachment_manager.file_path)

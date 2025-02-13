@@ -2,7 +2,7 @@ import asyncio
 import os
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Type, Sequence
+from typing import Any, Dict, Type
 from urllib.parse import urljoin
 
 import aiofiles
@@ -182,6 +182,7 @@ async def get_user_or_test_user(
         user = user_q.scalars().one()
     return user
 
+
 async def delete_img_file(*file_path: str, settings: Settings) -> None:
     """
     Функция удаляет файлы по переданным путям с учётом настроек.
@@ -205,3 +206,27 @@ async def delete_file_async(file_path: Path) -> None:
         os.remove(file_path)
     except FileNotFoundError:
         pass
+
+
+async def get_user_with_apikey_and_user_with_id(
+    session: AsyncSession, api_key: str, user_id: int, settings: Settings
+) -> tuple[User, User]:
+    """
+    Функция вернёт 2 пользователей, одного текущего,
+    по api-key (если такого нет, вернёт тестового пользователя из-за особенности фронта),
+    второго по его id.
+
+    :param session: AsyncSession.
+    :param api_key: API key пользователя.
+    :param user_id: ID пользователя.
+    :param settings: Settings.
+    :return: (API key пользователь, ID пользователь)
+    """
+    user_api = await get_user_or_test_user(session, settings, api_key)
+    another_user_q = await session.execute(
+        select(User)
+        .where(User.id == user_id)
+        .options(subqueryload(User.my_subscribers), subqueryload(User.my_subscriptions))
+    )
+    another_user = another_user_q.scalars().one()
+    return user_api, another_user

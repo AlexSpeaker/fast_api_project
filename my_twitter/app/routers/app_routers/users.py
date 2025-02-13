@@ -4,9 +4,9 @@ from app.application.classes import CustomFastApi
 from app.database.models import User
 from app.routers.app_routers.schemas.base import BaseSchema
 from app.routers.app_routers.schemas.users import OutUserSchema, UserSchema
-from app.utils.utils import get_user_or_test_user
-from fastapi import APIRouter, Header, Path, Request
-from sqlalchemy import or_, select
+from app.utils.utils import get_user_or_test_user, get_user_with_apikey_and_user_with_id
+from fastapi import APIRouter, Header, Path, Request, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import subqueryload
 
 router = APIRouter(tags=["users"])
@@ -27,7 +27,7 @@ async def me_route(
     """
     Функция вернёт информацию о пользователе.
 
-    Если по какой-то причине api-key не передан или в БД не нашёлся соответствующий пользователь,
+    Если в БД не нашёлся соответствующий пользователь,
     то функция вернёт информацию об тестовом пользователе, который всегда есть.
     Это сделано из-за особенности 'фронта', он ломается, если пользователя нет вообще.
 
@@ -98,20 +98,15 @@ async def follow_another_user(
     db = app.get_db()
 
     async with db.get_sessionmaker() as session:
-        users_q = await session.execute(
-            select(User)
-            .where(or_((User.id == user_id), (User.api_key == api_key)))
-            .options(
-                subqueryload(User.my_subscribers), subqueryload(User.my_subscriptions)
-            )
+        user_api, another_user = await get_user_with_apikey_and_user_with_id(
+            session=session,
+            api_key=api_key,
+            user_id=user_id,
+            settings=app.get_settings(),
         )
-        users = users_q.scalars().all()
-        if len(users) != 2:
-            return BaseSchema(result=False)
-        elif users[0].id == user_id:
-            users[1].users_in_my_subscriptions.append(users[0])
-        else:
-            users[0].users_in_my_subscriptions.append(users[1])
+        if user_api.id == another_user.id:
+            raise HTTPException(status_code=400, detail="Не верный запрос.")
+        user_api.users_in_my_subscriptions.append(another_user)
         await session.commit()
 
     return BaseSchema()
@@ -140,20 +135,12 @@ async def unsubscribe_from_another_user(
     db = app.get_db()
 
     async with db.get_sessionmaker() as session:
-        users_q = await session.execute(
-            select(User)
-            .where(or_((User.id == user_id), (User.api_key == api_key)))
-            .options(
-                subqueryload(User.my_subscribers), subqueryload(User.my_subscriptions)
-            )
+        user_api, another_user = await get_user_with_apikey_and_user_with_id(
+            session=session,
+            api_key=api_key,
+            user_id=user_id,
+            settings=app.get_settings(),
         )
-        users = users_q.scalars().all()
-        if len(users) != 2:
-            return BaseSchema(result=False)
-        elif users[0].id == user_id:
-            users[1].users_in_my_subscriptions.remove(users[0])
-        else:
-            users[0].users_in_my_subscriptions.remove(users[1])
-        await session.commit()
+        user_api.users_in_my_subscriptions.remove(another_user)
 
     return BaseSchema()

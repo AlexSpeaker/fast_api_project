@@ -16,7 +16,7 @@ async def lifespan_func(app: CustomFastApi) -> AsyncGenerator[None, None]:
     :param app: CustomFastApi.
     :return: AsyncGenerator[None, None].
     """
-    timeout_task = 2.0
+    timeout_task = 3.0
     loger = app.get_logger("lifespan")
     stop_event = asyncio.Event()  # Создаём флаг остановки
 

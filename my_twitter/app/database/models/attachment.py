@@ -11,9 +11,7 @@ if TYPE_CHECKING:
 class Attachment(Base):
     __tablename__ = "attachments"
     id: Mapped[int] = mapped_column(primary_key=True)
-    tweet_id: Mapped[int] = mapped_column(
-        ForeignKey(column="tweets.id"), nullable=True
-    )
+    tweet_id: Mapped[int] = mapped_column(ForeignKey(column="tweets.id"), nullable=True)
     image_path: Mapped[str] = mapped_column(String(1000), nullable=False)
 
     tweet: Mapped["Tweet"] = relationship(back_populates="attachments")

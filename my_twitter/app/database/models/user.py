@@ -25,8 +25,12 @@ class User(Base):
         String(MAX_API_KEY_LENGTH), nullable=False, unique=True, index=True
     )
 
-    tweets: Mapped[List["Tweet"]] = relationship(back_populates="author", cascade="all, delete-orphan")
-    likes: Mapped[List["Like"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    tweets: Mapped[List["Tweet"]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
+    )
+    likes: Mapped[List["Like"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
     my_subscriptions: Mapped[List["Subscriptions"]] = relationship(
         primaryjoin="User.id == Subscriptions.user_id",
