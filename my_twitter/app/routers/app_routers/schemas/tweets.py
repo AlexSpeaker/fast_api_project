@@ -7,7 +7,7 @@ from app.routers.app_routers.schemas.medias import AttachmentSchema
 from app.routers.app_routers.schemas.users import BaseUserSchema
 from app.settings.classes import Settings
 from app.utils.utils import get_image_url
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, ConfigDict
 
 
 class OutBaseTweet(BaseModel):
@@ -17,8 +17,7 @@ class OutBaseTweet(BaseModel):
 
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OutTweet(OutBaseTweet):

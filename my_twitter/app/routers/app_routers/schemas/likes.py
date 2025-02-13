@@ -1,5 +1,5 @@
 from app.routers.app_routers.schemas.users import BaseUserSchema
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, ConfigDict
 
 
 class LikesSchema(BaseModel):
@@ -27,5 +27,4 @@ class LikesSchema(BaseModel):
         """
         return str(self.user.name)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

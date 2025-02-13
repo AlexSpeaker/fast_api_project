@@ -8,7 +8,10 @@ from app.database.models.tweet import MAX_TWEET_LENGTH
 from sqlalchemy import select
 from sqlalchemy.orm import subqueryload
 
+from tests.utils import create_attachment_tweet_like
 
+
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_create_user(db: Database) -> None:
     """
@@ -28,7 +31,7 @@ async def test_create_user(db: Database) -> None:
         await session.commit()
     assert user.id
 
-
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_add_subscription(db: Database) -> None:
     """
@@ -69,7 +72,7 @@ async def test_add_subscription(db: Database) -> None:
         assert len(user.users_in_my_subscriptions) == 1
         assert user.users_in_my_subscriptions[0].id == subscription_user.id
 
-
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_subscriber(db: Database) -> None:
     """
@@ -116,7 +119,7 @@ async def test_subscriber(db: Database) -> None:
             subscriber.id for subscriber in user.users_following_me
         )
 
-
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_add_tweet(db: Database) -> None:
     """
@@ -163,7 +166,7 @@ async def test_add_tweet(db: Database) -> None:
         assert user.tweets[0].content == tweet.content
         assert user.tweets[0].id == tweet.id
 
-
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_add_like(db: Database) -> None:
     """
@@ -202,7 +205,7 @@ async def test_add_like(db: Database) -> None:
         assert len(tweet_bd.likes) == 1
         assert tweet_bd.likes[0].user == main_user
 
-
+@pytest.mark.models
 @pytest.mark.asyncio
 async def test_add_attachment(db: Database) -> None:
     """
@@ -241,3 +244,92 @@ async def test_add_attachment(db: Database) -> None:
         # Проверим есть ли у вложения привязанный твит.
         assert attachment_bd.tweet_id
         assert attachment_bd.tweet == tweet
+
+@pytest.mark.models
+@pytest.mark.asyncio
+async def test_delete_tweet(db: Database) -> None:
+    """
+    Ожидание: при удалении твита также удаляются вложения и лайки.
+
+    :param db: Database.
+    :return: None.
+    """
+    async with db.get_sessionmaker() as session:
+        users_q = await session.execute(select(User).order_by(User.id))
+        user = users_q.scalars().first()
+        # Создаём твит с вложением и лайком.
+        attachment, tweet, like = await create_attachment_tweet_like(session, user)
+        assert attachment.id
+        assert tweet.id
+        assert like.id
+        attachment_id = attachment.id
+        tweet_id = tweet.id
+        like_id = like.id
+
+        # Удаляем твит.
+        await session.delete(tweet)
+        await session.commit()
+        # Убедимся, что твит удалён.
+        tweet_q = await session.execute(
+            select(Tweet).where(Tweet.id == tweet_id)
+        )
+        tweet_bd = tweet_q.scalars().one_or_none()
+        assert not tweet_bd
+        # Убедимся, что лайк удалён.
+        like_q = await session.execute(
+            select(Like).where(Like.id == like_id)
+        )
+        like_bd = like_q.scalars().one_or_none()
+        assert not like_bd
+        # Убедимся, что вложение удалено.
+        attachment_q = await session.execute(
+            select(Attachment).where(Attachment.id == attachment_id)
+        )
+        attachment_bd = attachment_q.scalars().one_or_none()
+        assert not attachment_bd
+
+
+@pytest.mark.models
+@pytest.mark.asyncio
+async def test_delete_user(db: Database) -> None:
+    """
+    Ожидание: при удалении пользователя также удаляются все вложения и лайки и твиты.
+
+    :param db: Database.
+    :return: None.
+    """
+    async with db.get_sessionmaker() as session:
+        users_q = await session.execute(select(User).order_by(User.id))
+        user = users_q.scalars().first()
+        # Создаём твит с вложением и лайком.
+        attachment, tweet, like = await create_attachment_tweet_like(session, user)
+        attachment_id = attachment.id
+        tweet_id = tweet.id
+        like_id = like.id
+        # Удаляем пользователя.
+        await session.delete(user)
+        await session.commit()
+
+        # Убедимся, что твит удалён.
+        tweet_q = await session.execute(
+            select(Tweet).where(Tweet.id == tweet_id)
+        )
+        tweet_bd = tweet_q.scalars().one_or_none()
+        assert not tweet_bd
+        # Убедимся, что лайк удалён.
+        like_q = await session.execute(
+            select(Like).where(Like.id == like_id)
+        )
+        like_bd = like_q.scalars().one_or_none()
+        assert not like_bd
+        # Убедимся, что вложение удалено.
+        attachment_q = await session.execute(
+            select(Attachment).where(Attachment.id == attachment_id)
+        )
+        attachment_bd = attachment_q.scalars().one_or_none()
+        assert not attachment_bd
+
+
+
+
+

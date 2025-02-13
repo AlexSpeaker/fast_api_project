@@ -1,5 +1,5 @@
 from app.routers.app_routers.schemas.base import BaseSchema
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, ConfigDict
 
 
 class BaseAttachmentSchema(BaseModel):
@@ -9,8 +9,7 @@ class BaseAttachmentSchema(BaseModel):
 
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AttachmentSchema(BaseAttachmentSchema):
