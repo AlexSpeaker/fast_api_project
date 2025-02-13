@@ -142,5 +142,6 @@ async def unsubscribe_from_another_user(
             settings=app.get_settings(),
         )
         user_api.users_in_my_subscriptions.remove(another_user)
+        await session.commit()
 
     return BaseSchema()

@@ -268,6 +268,9 @@ async def test_delete_tweet(db: Database) -> None:
         attachment_id = attachment.id
         tweet_id = tweet.id
         like_id = like.id
+        session.expunge(attachment)
+        session.expunge(tweet)
+        session.expunge(like)
 
         # Удаляем твит.
         await session.delete(tweet)
@@ -306,6 +309,10 @@ async def test_delete_user(db: Database) -> None:
         attachment_id = attachment.id
         tweet_id = tweet.id
         like_id = like.id
+        session.expunge(attachment)
+        session.expunge(tweet)
+        session.expunge(like)
+
         # Удаляем пользователя.
         await session.delete(user)
         await session.commit()

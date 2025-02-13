@@ -9,6 +9,9 @@ async def test_route_api_medias(
 ) -> None:
     """
     Тестируем роут /api/medias метод post.
+    Так как мы не используем в приложении проверку содержимого файла через Pillow,
+    то сойдёт фэйковый файл картинки, в противном случае этот тест провалится
+    и нужно будет сюда передавать настоящую картинку.
 
     :param client: AsyncClient.
     :param fake_image: Словарь с данными тестового изображения для загрузки в тестах.
@@ -18,4 +21,4 @@ async def test_route_api_medias(
     response = await client.post("/api/medias", files=fake_image)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("result") == True
+    assert data["result"] is True
