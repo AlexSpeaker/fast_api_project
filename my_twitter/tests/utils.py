@@ -7,16 +7,35 @@ from app.database.models.base import Base
 
 
 async def create_db(db: Database) -> None:
+    """
+    Создаёт все таблицы в базе данных.
+
+    :param db: Экземпляр класса Database для работы с БД.
+    :return: None.
+    """
     async with db.get_engine().begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
 async def drop_db(db: Database) -> None:
+    """
+    Удаляет все таблицы из базы данных.
+
+    :param db: Экземпляр класса Database для работы с БД.
+    :return: None.
+    """
     async with db.get_engine().begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
 
 async def create_users(db: Database) -> None:
+    """
+    Создаёт тестовых пользователей в базе данных.
+    Генерирует 10 пользователей.
+
+    :param db: Экземпляр класса Database для работы с БД.
+    :return: None.
+    """
     users = [
         User(
             first_name="".join(choices(ascii_letters, k=10)),

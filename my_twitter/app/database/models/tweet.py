@@ -14,6 +14,17 @@ MAX_TWEET_LENGTH = 5000
 
 
 class Tweet(Base):
+    """
+    Твит.
+
+    **id** ID твита. \n
+    **user_id** ID пользователя. \n
+    **content** Текстовое содержимое твита. \n
+    **created** Дата и время создания твита. \n
+    **author** Связанный пользователь. \n
+    **likes** Связанные лайки твита. \n
+    **attachments** Связанные вложения твита. \n
+    """
     __tablename__ = "tweets"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey(column="users.id"), nullable=False)

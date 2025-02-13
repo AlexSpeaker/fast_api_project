@@ -10,6 +10,15 @@ if TYPE_CHECKING:
 
 
 class Like(Base):
+    """
+    Лайк твита.
+
+    **id** ID лайка. \n
+    **tweet_id** ID твита. \n
+    **user_id** ID пользователя. \n
+    **user** Связанный пользователь. \n
+    **tweet** Связанный твит.
+    """
     __tablename__ = "likes"
     __table_args__ = (UniqueConstraint("tweet_id", "user_id", name="tweet_id_user_id"),)
     id: Mapped[int] = mapped_column(primary_key=True)

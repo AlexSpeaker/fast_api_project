@@ -8,6 +8,10 @@ from sqlalchemy.ext.asyncio import (
 
 
 class Database:
+    """
+    Класс работы с БД.
+    Инициализирует асинхронный движок SQLAlchemy и фабрику сессий.
+    """
     def __init__(self, db_url: str) -> None:
         self.__engine = create_async_engine(db_url)
         self.__async_sessionmaker = async_sessionmaker(
@@ -15,10 +19,20 @@ class Database:
         )
 
     def get_engine(self) -> AsyncEngine:
+        """
+        Возвращает объект движка базы данных.
+
+        :return: AsyncEngine.
+        """
         return self.__engine
 
     @property
     def get_sessionmaker(self) -> async_sessionmaker[AsyncSession]:
+        """
+        Свойство, возвращающее фабрику сессий для работы с БД.
+
+        :return: Фабрику сессий для работы с БД.
+        """
         return self.__async_sessionmaker
 
 

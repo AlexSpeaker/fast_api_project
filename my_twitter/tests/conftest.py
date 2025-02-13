@@ -13,10 +13,12 @@ from tests.utils import create_db, create_users, drop_db
 
 @pytest_asyncio.fixture
 async def settings() -> Settings:
+    """
+    Подготавливаем настройки для тестирования приложения.
+
+    :return: Settings.
+    """
     db_settings = DBSettings(DATABASE_URL="sqlite+aiosqlite://")
-    # db_settings = DBSettings(
-    #     DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/twitter_db"
-    # )
 
     base_dir = Path(__file__).resolve().parent
 
@@ -35,11 +37,26 @@ async def settings() -> Settings:
 
 @pytest_asyncio.fixture
 async def app(settings: Settings, db: Database) -> CustomFastApi:
+    """
+    Создаём приложение для тестирования.
+
+    :param settings: Settings.
+    :param db: Database.
+    :return: CustomFastApi.
+    """
     return get_app(settings=settings, db=db)
 
 
 @pytest_asyncio.fixture
 async def db(settings: Settings) -> AsyncGenerator[Database, None]:
+    """
+    Создаём инструмент для работы с БД.
+    Перед использованием создаём таблицы и заполняем минимальными данными.
+    После использования - дропаем БД.
+
+    :param settings: Settings.
+    :return: AsyncGenerator[Database, None].
+    """
     db = Database(settings.DB_SETTINGS.DATABASE_URL)
     await create_db(db=db)
     await create_users(db=db)
@@ -49,4 +66,10 @@ async def db(settings: Settings) -> AsyncGenerator[Database, None]:
 
 @pytest_asyncio.fixture
 async def client(app: CustomFastApi) -> AsyncClient:
+    """
+    Фикстура для создания асинхронного тестового клиента.
+
+    :param app: CustomFastApi.
+    :return: AsyncClient.
+    """
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")

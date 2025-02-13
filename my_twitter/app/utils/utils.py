@@ -15,6 +15,9 @@ from sqlalchemy.orm import subqueryload
 
 
 class ImageManager:
+    """
+    Класс для работы с изображением согласно настройкам.
+    """
     __ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif"]
 
     def __init__(

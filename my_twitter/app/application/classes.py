@@ -7,6 +7,9 @@ from fastapi import FastAPI
 
 
 class CustomFastApi(FastAPI):
+    """
+    Расширенный FastAPI класс.
+    """
 
     def __init__(
         self, *args: Any, settings: Settings, db: Database, **kwargs: Any
@@ -18,10 +21,26 @@ class CustomFastApi(FastAPI):
 
     @staticmethod
     def get_logger(name: str) -> logging.Logger:
+        """
+        Возвращает логер приложения.
+
+        :param name: Имя логера.
+        :return: Logger.
+        """
         return logging.getLogger(".".join(["my_twitter_app", name]))
 
     def get_settings(self) -> Settings:
+        """
+        Возвращает подключенные настройки приложения.
+
+        :return: Settings.
+        """
         return self.__settings
 
     def get_db(self) -> Database:
+        """
+        Возвращает подключенный к приложению инструмент работы с БД.
+
+        :return: Database.
+        """
         return self.__db

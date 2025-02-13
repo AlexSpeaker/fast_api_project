@@ -26,6 +26,17 @@ def get_app(
     routers_sequence: Sequence[APIRouter] = routers,
     **kwargs: Any,
 ) -> CustomFastApi:
+    """
+    Функция базово настраивает FastAPI и возвращает приложение.
+
+    :param args: Дополнительные аргументы FastAPI.
+    :param settings: Настройки приложения.
+    :param db: Инструмент работы с БД (Database).
+    :param lifespan: Корутина контекстного менеджера для выполнения чего-либо до и после запуска приложения.
+    :param routers_sequence: Последовательность из подключаемых роутерах.
+    :param kwargs: Дополнительные именованные аргументы FastAPI.
+    :return: Приложение (CustomFastApi).
+    """
     app = CustomFastApi(*args, db=db, settings=settings, lifespan=lifespan, **kwargs)
     app.add_exception_handler(Exception, exception_handler)
     app.add_exception_handler(HTTPException, http_exception_handler)

@@ -4,6 +4,13 @@ from app.manage_utils.utils import list_commands
 
 
 async def decision_center(command: str, db: Database) -> None:
+    """
+    Функция выполняет введённую команду.
+
+    :param command: Команда пользователя.
+    :param db: Database.
+    :return: None.
+    """
 
     if command.lower() == "help":
         print("Список команд:")

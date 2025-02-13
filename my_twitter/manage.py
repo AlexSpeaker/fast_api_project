@@ -7,6 +7,15 @@ from main_debug import app_debug
 
 
 async def main() -> None:
+    """
+    Точка входа для выполнения команд через командную строку.
+    В зависимости от количества аргументов запускает `decision_center` с разными параметрами.
+
+    - Если передан один аргумент, используется обычное приложение `app`.
+    - Если переданы два аргумента и второй аргумент `--debug`, используется `app_debug`.
+
+    :return: None.
+    """
     argv = sys.argv
     if argv and len(argv) == 2:
         await decision_center(sys.argv[1], db=app.get_db())

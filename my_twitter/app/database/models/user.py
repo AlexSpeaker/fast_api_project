@@ -15,6 +15,19 @@ MAX_API_KEY_LENGTH = 255
 
 
 class User(Base):
+    """
+    Пользователь.
+
+    **id** ID пользователя. \n
+    **first_name** Имя пользователя. \n
+    **surname** Фамилия пользователя. \n
+    **middle_name** Отчество пользователя. \n
+    **api_key** Api-key пользователя. \n
+    **tweets** Связанные твиты пользователя. \n
+    **likes** Связанные лайки пользователя. \n
+    **users_in_my_subscriptions** Подписки пользователя. \n
+    **users_following_me** Подписчики пользователя. \n
+    """
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)

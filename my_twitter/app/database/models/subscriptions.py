@@ -9,6 +9,9 @@ if TYPE_CHECKING:
 
 
 class Subscriptions(Base):
+    """
+    Промежуточная таблица связи пользователей к пользователям.
+    """
     __tablename__ = "subscriptions"
     __table_args__ = (
         UniqueConstraint("user_id", "follower_id", name="user_id_follower_id"),

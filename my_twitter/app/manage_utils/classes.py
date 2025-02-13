@@ -6,6 +6,9 @@ from app.database.database import Database
 
 @dataclass
 class Command:
+    """
+    Класс хранит информацию об исполняющей функции и описании этой функции.
+    """
     exe_func: Callable[[Database], Coroutine[Any, Any, None]]
     description: str
 
@@ -24,6 +27,7 @@ class Commands:
     ]:
         """
         Функция-декоратор для регистрации команд.
+
         :param command_name: Название команды.
         :param description: Описание команды.
         :return: Декоратор.

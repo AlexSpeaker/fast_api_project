@@ -12,6 +12,7 @@ async def lifespan_func(app: CustomFastApi) -> AsyncGenerator[None, None]:
     """
     lifespan_func функция, обычно выполняет что-то до и после запуска приложения.
     В данной функции выполняется подключение к БД для создания таблиц, если таких ещё нет.
+    А также создаёт тестового пользователя из-за особенности фронта.
 
     :param app: CustomFastApi.
     :return: AsyncGenerator[None, None].
