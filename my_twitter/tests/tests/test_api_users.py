@@ -1,4 +1,6 @@
 import pytest
+from sqlalchemy.exc import IntegrityError
+
 from app.database.database import Database
 from app.database.models import User
 from httpx import AsyncClient
@@ -141,6 +143,12 @@ async def test_subscription(client: AsyncClient, db: Database) -> None:
         user = user_q.scalars().one()
         assert user.users_in_my_subscriptions[0].id == another_user.id
 
+        # Попробуем выполнить запрос ещё раз.
+        # Ожидаем ошибку.
+        response = await client.post(f"api/users/{another_user.id}/follow")
+        assert response.status_code == 400
+
+
 
 @pytest.mark.api_users
 @pytest.mark.asyncio
@@ -186,3 +194,8 @@ async def test_delete_a_subscription(client: AsyncClient, db: Database) -> None:
         )
         user = user_q.scalars().one()
         assert not user.users_in_my_subscriptions
+
+        # Попробуем выполнить запрос ещё раз.
+        # Ожидаем ошибку.
+        response = await client.delete(f"api/users/{another_user.id}/follow")
+        assert response.status_code == 400

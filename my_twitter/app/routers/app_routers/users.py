@@ -104,7 +104,7 @@ async def follow_another_user(
             user_id=user_id,
             settings=app.get_settings(),
         )
-        if user_api.id == another_user.id:
+        if user_api.id == another_user.id or another_user in user_api.users_in_my_subscriptions:
             raise HTTPException(status_code=400, detail="Не верный запрос.")
         user_api.users_in_my_subscriptions.append(another_user)
         await session.commit()
@@ -141,6 +141,8 @@ async def unsubscribe_from_another_user(
             user_id=user_id,
             settings=app.get_settings(),
         )
+        if user_api.id == another_user.id or another_user not in user_api.users_in_my_subscriptions:
+            raise HTTPException(status_code=400, detail="Не верный запрос.")
         user_api.users_in_my_subscriptions.remove(another_user)
         await session.commit()
 
