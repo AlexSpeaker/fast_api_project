@@ -17,3 +17,5 @@ async def test_route_api_medias(
     client.headers.setdefault("api-key", "test")
     response = await client.post("/api/medias", files=fake_image)
     assert response.status_code == 200
+    data = response.json()
+    assert data.get("result") == True

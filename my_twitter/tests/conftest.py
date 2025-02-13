@@ -1,3 +1,4 @@
+import asyncio
 import shutil
 from pathlib import Path
 from typing import AsyncGenerator
@@ -63,7 +64,11 @@ async def db(settings: Settings) -> AsyncGenerator[Database, None]:
     await create_users(db=db)
     yield db
     await drop_db(db=db)
-    shutil.rmtree(folder_path)
+    await asyncio.to_thread(
+        shutil.rmtree,
+        settings.MEDIA_FOLDER_ROOT / settings.IMAGES_FOLDER_NAME,
+        ignore_errors=True,
+    )
 
 
 @pytest_asyncio.fixture
