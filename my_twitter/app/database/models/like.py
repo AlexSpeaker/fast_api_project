@@ -19,6 +19,7 @@ class Like(Base):
     **user** Связанный пользователь. \n
     **tweet** Связанный твит.
     """
+
     __tablename__ = "likes"
     __table_args__ = (UniqueConstraint("tweet_id", "user_id", name="tweet_id_user_id"),)
     id: Mapped[int] = mapped_column(primary_key=True)

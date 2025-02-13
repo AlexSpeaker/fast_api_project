@@ -11,7 +11,7 @@ from app.routers.app_routers.schemas.tweets import (
     OutTweet,
 )
 from app.utils.utils import delete_img_file, get_user_or_test_user
-from fastapi import APIRouter, Body, Header, Path, Query, Request, HTTPException
+from fastapi import APIRouter, Body, Header, HTTPException, Path, Query, Request
 from sqlalchemy import exists, select
 
 router = APIRouter(tags=["tweets"])
@@ -113,7 +113,8 @@ async def delete_tweet(
     db = app.get_db()
     async with db.get_sessionmaker() as session:
         tweet_q = await session.execute(
-            select(Tweet).join(User)
+            select(Tweet)
+            .join(User)
             .where(Tweet.id == tweet_id, User.api_key == api_key)
         )
         tweet = tweet_q.scalars().one_or_none()
@@ -153,9 +154,7 @@ async def like_tweet(
         tweet_q = await session.execute(select(Tweet).where(Tweet.id == tweet_id))
         tweet = tweet_q.scalars().one()
         like_exists_q = await session.execute(
-            select(
-                exists().where(Like.user_id == user.id, Like.tweet_id == tweet_id)
-            )
+            select(exists().where(Like.user_id == user.id, Like.tweet_id == tweet_id))
         )
         like_exists = like_exists_q.scalar()
         if like_exists:

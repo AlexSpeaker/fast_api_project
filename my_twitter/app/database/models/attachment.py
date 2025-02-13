@@ -17,6 +17,7 @@ class Attachment(Base):
     **image_path**: Относительный (к настройкам) путь к картинке. \n
     **tweet**: Связанный твит.
     """
+
     __tablename__ = "attachments"
     id: Mapped[int] = mapped_column(primary_key=True)
     tweet_id: Mapped[int] = mapped_column(ForeignKey(column="tweets.id"), nullable=True)

@@ -9,6 +9,7 @@ class Command:
     """
     Класс хранит информацию об исполняющей функции и описании этой функции.
     """
+
     exe_func: Callable[[Database], Coroutine[Any, Any, None]]
     description: str
 

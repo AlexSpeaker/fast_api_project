@@ -12,6 +12,7 @@ class Database:
     Класс работы с БД.
     Инициализирует асинхронный движок SQLAlchemy и фабрику сессий.
     """
+
     def __init__(self, db_url: str) -> None:
         self.__engine = create_async_engine(db_url)
         self.__async_sessionmaker = async_sessionmaker(

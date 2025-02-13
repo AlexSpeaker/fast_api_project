@@ -1,7 +1,7 @@
 from typing import List
 
 from app.routers.app_routers.schemas.base import BaseSchema
-from pydantic import BaseModel, Field, computed_field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class BaseUserSchema(BaseModel):
@@ -54,6 +54,7 @@ class UserSchema(BaseUserSchema):
         return self.users_following_me
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class OutUserSchema(BaseSchema):
     """

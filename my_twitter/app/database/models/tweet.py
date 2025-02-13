@@ -25,6 +25,7 @@ class Tweet(Base):
     **likes** Связанные лайки твита. \n
     **attachments** Связанные вложения твита. \n
     """
+
     __tablename__ = "tweets"
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey(column="users.id"), nullable=False)

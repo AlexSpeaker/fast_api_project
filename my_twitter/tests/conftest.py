@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from typing import AsyncGenerator
 
@@ -62,6 +63,7 @@ async def db(settings: Settings) -> AsyncGenerator[Database, None]:
     await create_users(db=db)
     yield db
     await drop_db(db=db)
+    shutil.rmtree(folder_path)
 
 
 @pytest_asyncio.fixture
@@ -73,3 +75,13 @@ async def client(app: CustomFastApi) -> AsyncClient:
     :return: AsyncClient.
     """
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
+
+
+@pytest_asyncio.fixture
+async def fake_image() -> dict[str, tuple[str, bytes, str]]:
+    """
+    Фикстура для создания тестового изображения.
+
+    :return: dict[str, tuple[str, bytes, str]].
+    """
+    return {"file": ("test_image.png", b"fake_image_data", "image/png")}

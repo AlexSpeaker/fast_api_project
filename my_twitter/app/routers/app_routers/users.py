@@ -5,7 +5,7 @@ from app.database.models import User
 from app.routers.app_routers.schemas.base import BaseSchema
 from app.routers.app_routers.schemas.users import OutUserSchema, UserSchema
 from app.utils.utils import get_user_or_test_user, get_user_with_apikey_and_user_with_id
-from fastapi import APIRouter, Header, Path, Request, HTTPException
+from fastapi import APIRouter, Header, HTTPException, Path, Request
 from sqlalchemy import select
 from sqlalchemy.orm import subqueryload
 

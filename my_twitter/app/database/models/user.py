@@ -28,6 +28,7 @@ class User(Base):
     **users_in_my_subscriptions** Подписки пользователя. \n
     **users_following_me** Подписчики пользователя. \n
     """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
