@@ -1,6 +1,7 @@
 from app.database.database import Database
 from app.database.models import User
 from app.manage_utils.classes import Commands
+from app.manage_utils.utils import remove_backslash_sequences
 from app.utils.utils import get_or_create
 
 command_reg = Commands()
@@ -21,12 +22,19 @@ async def create_user(db: Database) -> None:
         "что информацию вводит человек, который знает, что он делает, "
         "поэтому никаких проверок или ограничений на ввод нет."
     )
-    first_name = input("Ведите ИМЯ пользователя: ")
-    middle_name = input("Ведите ОТЧЕСТВО пользователя: ")
-    surname = input("Ведите ФАМИЛИЮ пользователя: ")
-    api_key = input("Ведите API-KEY пользователя: ")
-    choice_user = input("Вы действительно хотите создать пользователя? Y/n: ")
-    if choice_user.lower() == "n" or choice_user.lower() == "no":
+    first_name = remove_backslash_sequences(input("Ведите ИМЯ пользователя: "))
+    middle_name = remove_backslash_sequences(input("Ведите ОТЧЕСТВО пользователя: "))
+    surname = remove_backslash_sequences(input("Ведите ФАМИЛИЮ пользователя: "))
+    api_key = remove_backslash_sequences(input("Ведите API-KEY пользователя: "))
+    choice_user = remove_backslash_sequences(
+        input("Вы действительно хотите создать пользователя? Y/n: ")
+    )
+    if (
+        choice_user.lower() == "n"
+        or choice_user.lower() == "no"
+        or choice_user.lower() == "тщ"
+        or choice_user.lower() == "т"
+    ):
         return
     async with db.get_sessionmaker() as session:
         created, user = await get_or_create(
