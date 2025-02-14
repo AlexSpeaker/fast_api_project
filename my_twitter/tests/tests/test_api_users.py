@@ -1,6 +1,4 @@
 import pytest
-from sqlalchemy.exc import IntegrityError
-
 from app.database.database import Database
 from app.database.models import User
 from httpx import AsyncClient
@@ -147,7 +145,6 @@ async def test_subscription(client: AsyncClient, db: Database) -> None:
         # Ожидаем ошибку.
         response = await client.post(f"api/users/{another_user.id}/follow")
         assert response.status_code == 400
-
 
 
 @pytest.mark.api_users
