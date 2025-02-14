@@ -143,3 +143,4 @@ prettifier.py
 
 __linters/
 
+/pg_data/
