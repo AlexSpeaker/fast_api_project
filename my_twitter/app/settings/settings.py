@@ -3,7 +3,7 @@ from pathlib import Path
 from app.settings.classes import DBSettings, LogerSettings, Settings
 
 db_settings = DBSettings(
-    DATABASE_URL="postgresql+asyncpg://postgres:postgres@database:5432/twitter_db"
+    DATABASE_URL="postgresql+asyncpg://postgres:postgres@db:5432/twitter_db"
 )
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
