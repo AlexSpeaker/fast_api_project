@@ -2,13 +2,13 @@ from contextlib import AbstractAsyncContextManager
 from typing import Any, Callable, Sequence
 
 from app.application.classes import CustomFastApi
-from app.application.lifespan import lifespan_func
-from app.database.database import Database
-from app.database.database import db as database
-from app.routers.exception_handlers import (
+from app.application.exception_handlers import (
     exception_handler,
     http_exception_handler,
 )
+from app.application.lifespan import lifespan_func
+from app.database.database import Database
+from app.database.database import db as database
 from app.routers.routers import routers
 from app.settings.classes import Settings
 from app.settings.settings import settings as app_settings

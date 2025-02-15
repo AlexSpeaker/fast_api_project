@@ -20,9 +20,12 @@ class CustomFastApi(FastAPI):
         self.__db = db
         os.makedirs(settings.MEDIA_FOLDER_ROOT, exist_ok=True)
         os.makedirs(settings.STATIC_ROOT, exist_ok=True)
-        for handler_name, handler_config in self.__settings.LOG_SETTINGS.LOGGING_CONFIG.get('handlers', {}).items():
-            if 'filename' in handler_config:
-                log_dir = os.path.dirname(handler_config['filename'])
+        for (
+            _,
+            handler_config,
+        ) in self.__settings.LOG_SETTINGS.LOGGING_CONFIG.get("handlers", {}).items():
+            if "filename" in handler_config:
+                log_dir = os.path.dirname(handler_config["filename"])
                 if log_dir and not os.path.exists(log_dir):
                     os.makedirs(log_dir, exist_ok=True)
 
