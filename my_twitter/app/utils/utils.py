@@ -6,9 +6,11 @@ from typing import Any, Dict, Type
 from urllib.parse import urljoin
 
 import aiofiles
+from app.application.classes import CustomFastApi
+from app.database.database import Database
 from app.database.models import User
 from app.settings.classes import Settings
-from fastapi import HTTPException, UploadFile
+from fastapi import HTTPException, Request, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import subqueryload
@@ -234,3 +236,25 @@ async def get_user_with_apikey_and_user_with_id(
     )
     another_user = another_user_q.scalars().one()
     return user_api, another_user
+
+
+def get_database(request: Request) -> Database:
+    """
+    Возвращает инструмент работы с ДБ.
+
+    :param request: Request.
+    :return: Database.
+    """
+    app: CustomFastApi = request.app
+    return app.get_db()
+
+
+def get_settings(request: Request) -> Settings:
+    """
+    Возвращает настройки приложения.
+
+    :param request: Request.
+    :return: Settings.
+    """
+    app: CustomFastApi = request.app
+    return app.get_settings()
